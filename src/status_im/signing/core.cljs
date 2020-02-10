@@ -10,6 +10,7 @@
             [status-im.i18n :as i18n]
             [status-im.native-module.core :as status]
             [status-im.utils.fx :as fx]
+            [status-im.hardwallet.common :as hardwallet.common]
             [status-im.utils.hex :as utils.hex]
             [status-im.utils.money :as money]
             [status-im.utils.security :as security]
@@ -282,7 +283,7 @@
       (fx/merge cofx
                 {:db (dissoc db :signing/tx :signing/in-progress? :signing/sign)}
                 (check-queue)
-                #(if on-result
+                #(when on-result
                    {:dispatch (conj on-result result)})))))
 
 (fx/defn transaction-completed
@@ -303,8 +304,12 @@
   [{:keys [db] :as cofx}]
   (let [{:keys [on-error]} (get-in db [:signing/tx])]
     (fx/merge cofx
-              {:db (dissoc db :signing/tx :signing/in-progress? :signing/sign)}
+              {:db (-> db
+                       (assoc-in [:hardwallet :pin :status] nil)
+                       (dissoc :signing/tx :signing/in-progress? :signing/sign))}
               (check-queue)
+              (hardwallet.common/hide-pair-sheet)
+              (hardwallet.common/clear-pin)
               #(when on-error
                  {:dispatch (conj on-error "transaction was cancelled by user")}))))
 

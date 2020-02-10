@@ -37,30 +37,28 @@
   (doseq [event ["keyCardOnConnected" "keyCardOnDisconnected"]]
     (.removeAllListeners event-emitter event)))
 
-(defn register-card-events []
-  (log/debug "[keycard] register-card-events")
+(defn on-card-connected [callback]
   (when (and config/hardwallet-enabled?
              platform/android?)
+    (.addListener event-emitter "keyCardOnConnected" callback)))
 
-    (remove-event-listeners)
+(defn on-card-disconnected [callback]
+  (when (and config/hardwallet-enabled?
+             platform/android?)
+    (.addListener event-emitter "keyCardOnDisconnected" callback)))
 
-    (re-frame/dispatch [:hardwallet.callback/on-register-card-events
-                        {:on-card-connected
-                         (.addListener event-emitter
-                                       "keyCardOnConnected"
-                                       #(re-frame/dispatch [:hardwallet.callback/on-card-connected %]))
-
-                         :on-card-disconnected
-                         (.addListener event-emitter
-                                       "keyCardOnDisconnected"
-                                       #(re-frame/dispatch [:hardwallet.callback/on-card-disconnected %]))}])))
-
-(defn get-application-info [{:keys [pairing on-success]}]
+(defn get-application-info-raw [{:keys [pairing on-success on-error]}]
   (log/debug "[keycard] get-application-info")
   (.. keycard
       (getApplicationInfo (str pairing))
-      (then #(re-frame/dispatch [:hardwallet.callback/on-get-application-info-success % on-success]))
-      (catch #(re-frame/dispatch [:hardwallet.callback/on-get-application-info-error (error-object->map %)]))))
+      (then on-success)
+      (catch #(on-error (error-object->map %)))))
+
+(defn get-application-info [{:keys [pairing on-success]}]
+  (get-application-info-raw
+   {:pairing    pairing
+    :on-success #(re-frame/dispatch [:hardwallet.callback/on-get-application-info-success % on-success])
+    :on-error   #(re-frame/dispatch [:hardwallet.callback/on-get-application-info-error %])}))
 
 (defn install-applet []
   (log/debug "[keycard] install-applet")
@@ -95,14 +93,24 @@
         (then #(re-frame/dispatch [:hardwallet.callback/on-pair-success %]))
         (catch #(re-frame/dispatch [:hardwallet.callback/on-pair-error (error-object->map %)])))))
 
-(defn generate-mnemonic
-  [{:keys [pairing words]}]
+(defn generate-mnemonic-raw
+  [{:keys [pairing words on-success on-error]}]
   (log/debug "[keycard] generate-mnemonic")
   (when pairing
     (.. keycard
         (generateMnemonic pairing words)
-        (then #(re-frame/dispatch [:hardwallet.callback/on-generate-mnemonic-success %]))
-        (catch #(re-frame/dispatch [:hardwallet.callback/on-generate-mnemonic-error (error-object->map %)])))))
+        (then on-success)
+        (catch #(on-error (error-object->map %))))))
+
+(defn generate-mnemonic
+  [{:keys [pairing words]}]
+  (generate-mnemonic-raw
+   {:pairing pairing
+    :words   words
+    :on-success
+    #(re-frame/dispatch [:hardwallet.callback/on-generate-mnemonic-success %])
+    :on-error
+    #(re-frame/dispatch [:hardwallet.callback/on-generate-mnemonic-error %])}))
 
 (defn generate-and-load-key
   [{:keys [mnemonic pairing pin]}]

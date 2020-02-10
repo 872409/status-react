@@ -98,35 +98,6 @@
          [react/text {:style {:color colors/blue}}
           (i18n/label :t/begin-set-up)]]]]]]))
 
-(defn start []
-  [react/view styles/container
-   [topbar/topbar]
-   [react/view {:flex            1
-                :flex-direction  :column
-                :justify-content :space-between
-                :align-items     :center}
-    [react/view {:flex-direction :column
-                 :align-items    :center}
-     [react/view {:margin-top 16}
-      [react/text {:style {:typography :header
-                           :text-align :center}}
-       (i18n/label :t/keycard-onboarding-start-header)]]
-     [react/view {:margin-top 16
-                  :width      311}
-      [react/text {:style {:color      colors/gray
-                           :text-align :center}}
-       (i18n/label :t/keycard-onboarding-start-text)]]]
-    [react/view {:align-items     :center
-                 :flex            1
-                 :justify-content :center}
-     [react/image {:source      (resources/get-image :keycard-phone)
-                   :resize-mode :center
-                   :style       {:width  160
-                                 :height 170}}]
-     [react/text {:style {:color      colors/gray
-                          :text-align :center}}
-      (i18n/label :t/hold-card)]]]])
-
 (defview puk-code []
   (letsubs [secrets [:hardwallet-secrets]
             steps [:hardwallet-flow-steps]
@@ -218,12 +189,6 @@
          [components.common/bottom-button
           {:on-press #(re-frame/dispatch [:keycard.onboarding.puk-code.ui/next-pressed])
            :forward? true}]]]]]]))
-
-(defn preparing []
-  (views/loading :t/keycard-onboarding-preparing-header))
-
-(defn finishing []
-  (views/loading :t/keycard-onboarding-finishing-header))
 
 (defview pin []
   (letsubs [pin [:hardwallet/pin]

@@ -69,39 +69,6 @@
        [react/text {:style {:color colors/blue}}
         (i18n/label :t/keycard-recovery-intro-button-text)]]]]]])
 
-(defn start []
-  [react/view styles/container
-   [topbar/topbar]
-   [react/view {:flex            1
-                :flex-direction  :column
-                :justify-content :space-between
-                :align-items     :center}
-    [react/view {:flex-direction :column
-                 :align-items    :center}
-     [react/view {:margin-top 16}
-      [react/text {:style {:typography :header
-                           :text-align :center}}
-       (i18n/label :t/keycard-onboarding-start-header)]]
-     [react/view {:margin-top 16
-                  :width      311}
-      [react/text {:style {:font-size   15
-                           :line-height 22
-                           :color       colors/gray
-                           :text-align  :center}}
-       (i18n/label :t/keycard-onboarding-start-text)]]]
-    [react/view {:flex            1
-                 :flex-direction  :column
-                 :align-items     :center
-                 :justify-content :center}
-     [react/view
-      [react/image {:source      (resources/get-image :keycard-phone)
-                    :resize-mode :center
-                    :style       {:width  160
-                                  :height 170}}]]]]])
-
-(defn pairing []
-  (views/loading :t/keycard-onboarding-pairing-header))
-
 (defview pin []
   (letsubs [pin [:hardwallet/pin]
             status [:hardwallet/pin-status]
@@ -139,9 +106,7 @@
 (defview pair []
   (letsubs [pair-code [:hardwallet-pair-code]
             error [:hardwallet-setup-error]
-            {:keys [free-pairing-slots]} [:hardwallet-application-info]
-            width [:dimensions/window-width]
-            ref (atom nil)]
+            {:keys [free-pairing-slots]} [:hardwallet-application-info]]
     [react/view styles/container
      [toolbar/toolbar
       {:transparent? true}
@@ -199,9 +164,6 @@
           :label     (i18n/label :t/pair-card)
           :disabled? (empty? pair-code)
           :forward?  true}]]]]]))
-
-(defn recovering []
-  (views/loading :t/recovering-key))
 
 (defview success []
   (letsubs [address [:hardwallet-multiaccount-wallet-address]

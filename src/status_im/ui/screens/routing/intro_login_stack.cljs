@@ -19,10 +19,6 @@
     :intro
     :intro-wizard
     :hardwallet-authentication-method
-    :hardwallet-connect
-    :keycard-connection-lost
-    :keycard-connection-lost-setup
-    :keycard-nfc-on
     :keycard-pairing
     :keycard-blank
     :keycard-wrong
@@ -31,18 +27,13 @@
     :keycard-login-connect-card
     :not-keycard
     :keycard-onboarding-intro
-    :keycard-onboarding-start
     :keycard-onboarding-puk-code
-    :keycard-onboarding-preparing
-    :keycard-onboarding-finishing
     :keycard-onboarding-pin
     :keycard-onboarding-recovery-phrase
     :keycard-onboarding-recovery-phrase-confirm-word1
     :keycard-onboarding-recovery-phrase-confirm-word2
     :keycard-recovery-intro
-    :keycard-recovery-start
     :keycard-recovery-pair
-    :keycard-recovery-recovering
     :keycard-recovery-success
     :keycard-recovery-no-key
     :keycard-recovery-pin})
@@ -68,10 +59,8 @@
 
               config/hardwallet-enabled?
               (concat [:hardwallet-authentication-method
-                       :hardwallet-connect
                        :keycard-login-pin
                        :keycard-login-connect-card
-                       :keycard-nfc-on
                        :keycard-blank
                        :keycard-wrong
                        :keycard-unpaired
@@ -88,23 +77,15 @@
       (update :screens conj
               :intro
               :intro-wizard
-              :keycard-connection-lost
-              :keycard-connection-lost-setup
-              :keycard-nfc-on
               :keycard-pairing
               :keycard-onboarding-intro
-              :keycard-onboarding-start
               :keycard-onboarding-puk-code
-              :keycard-onboarding-preparing
-              :keycard-onboarding-finishing
               :keycard-onboarding-pin
               :keycard-onboarding-recovery-phrase
               :keycard-onboarding-recovery-phrase-confirm-word1
               :keycard-onboarding-recovery-phrase-confirm-word2
               :keycard-recovery-intro
-              :keycard-recovery-start
               :keycard-recovery-pair
-              :keycard-recovery-recovering
               :keycard-recovery-success
               :keycard-recovery-no-key
               :keycard-recovery-pin)

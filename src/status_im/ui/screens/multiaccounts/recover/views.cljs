@@ -3,7 +3,6 @@
   (:require [re-frame.core :as re-frame]
             [status-im.ui.components.react :as react]
             [status-im.multiaccounts.recover.core :as multiaccounts.recover]
-            [status-im.hardwallet.core :as hardwallet]
             [status-im.hardwallet.nfc :as nfc]
             [status-im.i18n :as i18n]
             [status-im.utils.config :as config]
@@ -69,7 +68,7 @@
                            :height           40}
                [react/image {:source (resources/get-image :keycard-logo-blue)
                              :style  {:width 24 :height 24}}]]
-        :on-press            #(re-frame/dispatch [::hardwallet/recover-with-keycard-pressed])}])]])
+        :on-press            #(re-frame/dispatch [:hardwallet/recover-with-keycard-pressed])}])]])
 
 (defn bottom-sheet []
   {:content        bottom-sheet-view
